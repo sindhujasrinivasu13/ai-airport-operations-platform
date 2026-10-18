@@ -102,7 +102,8 @@ airport-flight-ops-cockpit/
 
 ```bash
 # 1. Navigate to the project directory:
-cd "C:\Users\sindh\.gemini\antigravity\scratch\airport-flight-ops-cockpit"
+
+Open a terminal in the project folder.
 
 # 2. Run the Vite development server:
 npm run dev
