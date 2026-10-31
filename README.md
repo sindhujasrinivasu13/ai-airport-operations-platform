@@ -1,131 +1,301 @@
-# Airport Operations Coordination Engine
-## Module: Flight Operations & Flight Status
-### "AI Flight Risk & Impact Cockpit"
+# Flight Operations Module (React + Vite)
 
-> **Real-time flight monitoring, delay risk analysis and operational impact assessment.**
+A modern, production-grade Flight Operations Control Center frontend module for real-time flight monitoring, AI-assisted risk diagnostics, What-If delay impact simulation, multi-agent pipeline orchestration, and Human-in-the-Loop decision execution.
 
 ---
 
-### 1. Overview
-The **Flight Operations & Flight Status** module is an enterprise-grade aerospace decision-support cockpit engineered for airport coordinators and collaborative decision-making (A-CDM) teams. Rather than presenting a static flight table, this module provides an **AI Flight Risk & Impact Cockpit** designed to answer key operational questions in real time:
-1. Which flights are at risk?
-2. What is their real-time operational status?
-3. What are the explainable root causes of risk?
-4. What is the expected delay and delay probability?
-5. How will gates, crew rosters, downstream flights, and connecting passengers be impacted?
-6. What will happen if a delay increases by +15, +30, or +60 minutes (What-If Simulation)?
-7. What proactive advisory action should the airport take?
+## Architecture & Directory Structure
 
----
-
-### 2. Architecture & File Structure
+All module source code is organized within the `src/` directory to facilitate straightforward handoff to the backend and core application teams.
 
 ```
-airport-flight-ops-cockpit/
-├── index.html                     # HTML5 shell with dark aerospace styling & JetBrains Mono fonts
-├── vite.config.js                 # Vite bundling configuration
-├── package.json                   # Project manifest (React, Vite, Lucide-React)
-├── src/
-│   ├── main.jsx                   # React root entry point
-│   ├── App.jsx                    # Root app wrapper rendering FlightOperations page
-│   ├── index.css                  # Aviation dark command cockpit design system
-│   │
-│   ├── data/
-│   │   └── demoFlights.js         # Realistic 12-flight dataset with telemetry & risk metadata
-│   │
-│   ├── services/
-│   │   └── flightApi.js           # API-ready service (Promise-based abstraction for backend connection)
-│   │
-│   ├── pages/
-│   │   └── FlightOperations.jsx   # Master cockpit layout combining feed & analysis panel
-│   │
-│   └── components/
-│       ├── SummaryCards.jsx       # Dynamic fleet metrics (Total, On Time, Delayed, High Risk, Critical)
-│       ├── SearchFilters.jsx      # Multi-field search, status/risk filter tabs, sorting & view switcher
-│       ├── FlightCard.jsx         # Priority flight card with gauge, route strip, & disruption factors
-│       ├── FlightTable.jsx        # High-density operational table view
-│       ├── RiskScore.jsx          # Reusable SVG radial risk gauge (0-30 Low, 31-60 Med, 61-80 High, 81-100 Crit)
-│       ├── RiskFactors.jsx        # Explainable AI root-cause diagnostics (Weather, Gate, Crew, etc.)
-│       ├── ImpactSimulator.jsx    # KEY FEATURE: What-if delay simulator (+15m, +30m, +60m)
-│       ├── FlightDependency.jsx   # 5-Node visual cascading resource dependency chain
-│       ├── AIRecommendation.jsx   # Advisory recommendation with Human-in-the-Loop approval
-│       └── AgentStatus.jsx        # Multi-Agent pipeline synchronization states
+src/
+├── components/
+│   ├── OperationalPulse.jsx       # Executive network health, hub status & active disruptions
+│   ├── FlightCard.jsx             # Individual flight card with route, delay & status tags
+│   ├── FlightPriorityBoard.jsx    # Triage queue categorized by priority (Critical, High, Nominal)
+│   ├── FlightRiskPanel.jsx        # Command deck cockpit orchestrating flight diagnostic tabs
+│   ├── RiskScore.jsx              # Normalized risk score gauge, badge, and trend indicator
+│   ├── RiskFactors.jsx            # Granular risk breakdown (Weather, Crew, Curfew, Turnaround)
+│   ├── ImpactSimulator.jsx        # Interactive What-If slider simulating downstream impact
+│   ├── FlightDependency.jsx       # Inbound airframe rotation & downstream passenger transfer map
+│   ├── AIRecommendation.jsx      # Mitigation decision cards with Approve and Review actions
+│   ├── AgentWorkflow.jsx          # Multi-agent execution stepper showing real-time pipeline status
+│   ├── RiskChart.jsx              # SVG visual trajectory for risk score and delay timeline
+│   └── SearchFilter.jsx           # Multi-dimensional search, filter, and sort controls
+│
+├── pages/
+│   └── FlightOperations.jsx       # Main module page integrating all operational components
+│
+├── services/
+│   └── flightApi.js               # Central Axios service layer configured for FastAPI endpoints
+│
+├── data/
+│   └── demoFlights.js             # Standalone realistic operational dataset for preview mode
+│
+├── App.jsx                        # Root React Router setup (/flight-operations route)
+├── main.jsx                       # Application entry point
+└── index.css                      # Tailwind CSS and high-contrast aviation dark mode styles
 ```
 
 ---
 
-### 3. Key Features
+## Quickstart
 
-#### 1. Dynamic Flight Operations Cockpit
-- Real-time dynamic KPI cards calculating **Total Flights**, **On Time**, **Delayed**, **High Risk**, and **Critical**.
-- Click-to-filter capability on summary cards for rapid operational filtering.
+### Prerequisites
+- Node.js (v18.0.0 or higher)
+- npm (v9.0.0 or higher)
 
-#### 2. Advanced Search, Filter & Dual View
-- Search across flight number (`AI-452`), origin (`DEL`), destination (`HYD`), or airline (`Air India`).
-- Filter by operational status (**On Time**, **Delayed**, **Cancelled**) and risk tier (**High Risk**, **Critical**).
-- Sort by **Highest Risk**, **Highest Delay**, **Earliest Departure**, or **Flight Number**.
-- Dual view toggle: **Cockpit Cards View** and **Operations Table View**.
-
-#### 3. Priority Flights Section
-- Prioritizes flights with the highest operational risk score.
-- Displays flight trajectory, status badges, delay minutes, delay probability, and primary disruption factors.
-
-#### 4. Explainable Risk Score & Diagnostics
-- **Aviation Radial Gauge**: Visualizes composite risk score (0–100) with color-coded safety brackets.
-- **Explainable Factors**: Transparent breakdown of root causes (Weather radar cells, departure queues, gate occupancy buffer, inbound delay, ramp staffing).
-
-#### 5. Unique Key Feature: Delay Impact Simulator
-- Allows airport controllers to simulate hypothetical delays (**+15 min**, **+30 min**, **+60 min**).
-- Recalculates projected departure time and forecasts operational consequences across:
-  - **Gate Impact**: Tarmac holds, apron congestion, and stand turnover bottlenecks.
-  - **Downstream Aircraft Rotation**: Turnaround compression on subsequent flights.
-  - **Flight Crew Duty Limits**: Crew rest depletion and Flight Duty Period (FDP) timeouts.
-  - **Passenger Transfers**: Missed connecting flight projections and bag transfers.
-  - **Overall Impact**: Multi-resource weighted operational severity with mitigation guidance.
-
-#### 6. Visual Flight Dependency Chain
-- Visualizes the 5-node operational chain:
-  `Current Aircraft → Assigned Gate → Assigned Crew → Next Flight Rotation → Connecting Passengers`
-- Highlights critical international transfers (e.g., ORD, FRA, JFK).
-
-#### 7. AI Recommendation & Human-in-the-Loop Governance
-- Displays actionable advisory proposals with confidence metrics.
-- Enforces human operator authorization before tactical dispatch, recording an audit log reference.
-
-#### 8. Multi-Agent Pipeline Visualization
-- Illustrates data flow across autonomous cognitive agents:
-  `Research Agent → Analysis Agent → Resource Agent → Planning Agent → Decision Agent`
-
----
-
-### 4. Running the Project Locally
-
+### Installation
 ```bash
-# 1. Navigate to the project directory:
+# Install dependencies
+npm install
 
-Open a terminal in the project folder.
-
-# 2. Run the Vite development server:
+# Start local development server
 npm run dev
+```
 
-# 3. Open your browser:
-# Navigate to http://localhost:5173
+The application will run at:
+```
+http://localhost:5173/flight-operations
+```
+
+### Production Build
+```bash
+# Build production bundle
+npm run build
+
+# Preview production build locally
+npm run preview
 ```
 
 ---
 
-### 5. Backend Team Integration Guide
-To integrate this module with backend services:
-1. Open `src/services/flightApi.js`.
-2. Define `VITE_AIRPORT_API_URL` in an `.env` file (e.g., `VITE_AIRPORT_API_URL=http://localhost:8000`).
-3. Uncomment the provided `fetch()` calls in:
-   - `getFlights()` → `GET /api/v1/flights`
-   - `getFlightById(id)` → `GET /api/v1/flights/:id`
-   - `getFlightRisk(id)` → `GET /api/v1/ml/risk-analysis/:id`
-   - `getFlightImpact(id, minutes)` → `POST /api/v1/simulator/delay-impact`
-   - `approveRecommendation(id, action)` → `POST /api/v1/decision-agent/approve`
+## Environment Configuration
+
+Create a `.env` file in the project root:
+
+```env
+# URL for the FastAPI backend service
+VITE_API_BASE_URL=http://localhost:8000/api
+
+# Set to false to connect directly to the live FastAPI backend
+# Set to true (default) to run in standalone demo mode with local mock data
+VITE_USE_DEMO_DATA=true
+```
 
 ---
 
-### 6. Safety & Non-Authoritative Advisory Disclaimer
-This application is designed strictly as a **decision-support and demonstration interface**. It does not exert autonomous control over aircraft, runway operations, or air traffic control. Operational recommendations require human coordinator authorization.
+## Frontend Integration Handoff
+
+This section outlines how the backend team can ingest and integrate this module into the main project.
+
+### 1. Which Files the Backend Team Needs
+
+The backend team can copy the entire `src/` folder into their repository, or selectively import the following:
+
+- **Main Page Entry**: `src/pages/FlightOperations.jsx`
+- **Axios Service Layer**: `src/services/flightApi.js`
+- **UI Components**: `src/components/*` (all 12 components are fully modular)
+- **Demo Fallback Dataset**: `src/data/demoFlights.js` (used for fallback or offline testing)
+- **Styles**: `src/index.css` (or merge Tailwind classes into your global CSS)
+
+### 2. Which API Functions Need Backend Endpoints
+
+The `src/services/flightApi.js` service exposes 6 primary API functions plus 2 roster queries that require FastAPI backend routes:
+
+| API Function | HTTP Method | Target FastAPI Route | Request Payload | Description |
+|---|---|---|---|---|
+| `getAllFlights()` | `GET` | `/api/flights` | None | Returns array of all monitored flights |
+| `getOperationalPulse()` | `GET` | `/api/operations/pulse` | None | Returns network-wide KPI summary |
+| `getFlightRisk(flightNumber)` | `GET` | `/api/flights/{flightNumber}/risk` | None | Returns risk score and factor breakdown |
+| `getFlightDelay(flightNumber)` | `GET` | `/api/flights/{flightNumber}/delay` | None | Returns delay minutes and root cause |
+| `simulateFlightImpact(flightNumber, additionalDelay)` | `POST` | `/api/flights/{flightNumber}/simulate-impact` | `{"additionalDelay": 30}` | Calculates projected risk, missed connections, curfew violations |
+| `getFlightRecommendation(flightNumber)` | `GET` | `/api/flights/{flightNumber}/recommendation` | None | Returns AI mitigation recommendation |
+| `approveDecision(flightNumber, approvedBy)` | `POST` | `/api/flights/{flightNumber}/approve` | `{"approvedBy": "Dispatcher"}` | Enacts mitigation action with audit stamp |
+| `reviewDecision(flightNumber, reviewedBy)` | `POST` | `/api/flights/{flightNumber}/review` | `{"reviewedBy": "Supervisor"}` | Flags decision for supervisory review |
+
+### 3. Expected JSON Structure
+
+#### A. Flight Object Structure (`GET /api/flights` and item responses)
+```json
+{
+  "id": "fl-1042",
+  "flightNumber": "AA-1042",
+  "airline": "American Airlines",
+  "origin": {
+    "code": "JFK",
+    "name": "New York John F. Kennedy",
+    "terminal": "T8",
+    "gate": "14B",
+    "scheduledTime": "14:30",
+    "estimatedTime": "16:15",
+    "runway": "31L"
+  },
+  "destination": {
+    "code": "LHR",
+    "name": "London Heathrow",
+    "terminal": "T3",
+    "gate": "Gate 18",
+    "scheduledTime": "22:45",
+    "estimatedTime": "00:30",
+    "runway": "27R"
+  },
+  "aircraft": {
+    "model": "Boeing 777-300ER",
+    "tailNumber": "N780AA",
+    "capacity": 304,
+    "passengerLoad": 286,
+    "cargoWeightKg": 14200
+  },
+  "status": "Critical Risk",
+  "priority": "CRITICAL",
+  "delayMinutes": 105,
+  "delayReason": "Severe convective cell over departure corridor; crew duty limit approaching.",
+  "riskScore": 88,
+  "riskLevel": "CRITICAL",
+  "riskFactors": [
+    {
+      "category": "Crew Legality",
+      "severity": "CRITICAL",
+      "score": 94,
+      "weight": "35%",
+      "description": "Cockpit crew duty ceiling expires in 62 minutes."
+    }
+  ],
+  "dependencies": {
+    "inboundFlight": "AA-930 (MIA -> JFK)",
+    "turnaroundMinutes": 80,
+    "turnaroundStatus": "Tight Buffer (8m remaining)",
+    "connectingPassengers": 64,
+    "connectingFlights": [
+      {
+        "flight": "BA-1440 (LHR -> EDI)",
+        "passengers": 18,
+        "scheduledConnectWindow": "50m",
+        "status": "CRITICAL_RISK"
+      }
+    ],
+    "crewHandoff": "Reserve Crew Team Bravo available at JFK T8"
+  },
+  "recommendation": {
+    "id": "rec-1042-01",
+    "action": "AIRCRAFT_SWAP_AND_CREW_REASSIGNMENT",
+    "title": "Immediate Standby Aircraft Swap & Reserve Crew Bravo Deployment",
+    "confidenceScore": 94,
+    "reasoning": "Swapping to standby Boeing 777-300ER clears departure before weather closes.",
+    "estimatedSavings": "$44,000 & 85 mins delay reduction",
+    "alternativeActions": ["Maintain current airframe (89% cancellation probability)"],
+    "status": "PENDING_APPROVAL",
+    "approvedBy": null,
+    "reviewedBy": null,
+    "timestamp": "2026-10-31T09:22:15Z"
+  },
+  "agentWorkflow": [
+    {
+      "stage": "Telemetry & Weather Ingestion",
+      "agent": "AeroPulse Weather Watcher",
+      "status": "COMPLETED",
+      "timestamp": "09:12:04",
+      "detail": "Radar detected cell over Runway 31L."
+    }
+  ],
+  "historicalTrend": [
+    { "time": "T-120m", "score": 22, "delay": 0 },
+    { "time": "Now", "score": 88, "delay": 105 }
+  ]
+}
+```
+
+#### B. Simulation Response (`POST /api/flights/{flightNumber}/simulate-impact`)
+```json
+{
+  "flightNumber": "AA-1042",
+  "baselineDelayMinutes": 105,
+  "additionalDelayMinutes": 30,
+  "projectedTotalDelayMinutes": 135,
+  "baselineRiskScore": 88,
+  "simulatedRiskScore": 96,
+  "riskDelta": 8,
+  "baselineMissedConnections": 34,
+  "simulatedMissedConnections": 44,
+  "additionalMissedConnections": 10,
+  "curfewRisk": true,
+  "curfewAirport": "London Heathrow (LHR)",
+  "baselineFinancialImpact": 64000,
+  "simulatedFinancialImpact": 84000,
+  "additionalFinancialCost": 20000,
+  "severityCategory": "CRITICAL"
+}
+```
+
+#### C. Approval Response (`POST /api/flights/{flightNumber}/approve`)
+```json
+{
+  "success": true,
+  "message": "Recommendation for AA-1042 successfully approved.",
+  "flightNumber": "AA-1042",
+  "approvedBy": "Ops Dispatcher #402",
+  "status": "APPROVED",
+  "timestamp": "2026-10-31T09:30:00Z"
+}
+```
+
+### 4. How the Axios Service Will Receive Backend Data
+
+In `src/services/flightApi.js`, the service client is configured as:
+
+```javascript
+export const apiClient = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api',
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+  }
+});
+```
+
+To switch from demo mode to live FastAPI mode:
+1. Set `VITE_USE_DEMO_DATA=false` in `.env`.
+2. Configure `VITE_API_BASE_URL` to point to your FastAPI server (e.g. `http://localhost:8000/api`).
+3. The UI will automatically route calls through Axios to your endpoints. If an endpoint is temporarily unavailable, the service logs a clean warning and falls back to demo data to prevent UI crashes.
+
+### 5. How to Import FlightOperations.jsx Into the Main Project
+
+If your main project already has a React Router setup:
+
+```jsx
+import React from 'react';
+import { Route } from 'react-router-dom';
+import FlightOperations from './pages/FlightOperations';
+
+// Inside your main application router:
+<Route path="/flight-operations" element={<FlightOperations />} />
+```
+
+Or render it directly inside any parent layout:
+
+```jsx
+import FlightOperations from './pages/FlightOperations';
+
+function OperationsDashboard() {
+  return <FlightOperations />;
+}
+```
+
+### 6. Which Components Are Reusable
+
+Every component in `src/components/` is decoupled from parent state and can be embedded anywhere:
+
+- **`RiskScore`**: Standalone risk badge or circular SVG gauge. Accepts `score`, `level`, `size` ('sm', 'md', 'gauge'), and `trend`.
+- **`OperationalPulse`**: High-level KPI bar for dashboards or executive views. Accepts `pulseData`.
+- **`FlightCard`**: Individual interactive flight card. Accepts `flight`, `isSelected`, and `onSelect`.
+- **`FlightPriorityBoard`**: Priority list with triage filtering tabs. Accepts `flights`, `selectedFlightId`, `onSelectFlight`.
+- **`ImpactSimulator`**: What-If scenario slider. Accepts `flight` and `onSimulationChange`.
+- **`AIRecommendation`**: Recommendation card with action triggers. Accepts `flight` and `onActionComplete`.
+- **`RiskFactors`**: Breakdown list with visual progress bars. Accepts `factors` array.
+- **`RiskChart`**: Pure SVG line chart with timeline and score thresholds. Accepts `data` array.
+- **`FlightDependency`**: Turnaround and connecting passenger display. Accepts `dependencies` object.
+- **`AgentWorkflow`**: Multi-agent status stepper. Accepts `workflow` array.
+- **`SearchFilter`**: Search bar with dropdown filters. Accepts callbacks and filter values.
